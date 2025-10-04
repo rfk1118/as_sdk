@@ -1,0 +1,47 @@
+{
+  "name": "aster-sdk",
+  "version": "1.0.0",
+  "description": "TypeScript SDK for Aster DEX API",
+  "main": "dist/aster-sdk.js",
+  "types": "dist/aster-sdk.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsx src/index.ts",
+    "start": "node dist/index.js",
+    "test": "jest",
+    "clean": "rimraf dist"
+  },
+  "keywords": [
+    "aster",
+    "dex",
+    "crypto",
+    "trading",
+    "sdk",
+    "typescript"
+  ],
+  "author": "Aster DEX Team",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^1.6.0",
+    "ccxt": "^4.5.5",
+    "dotenv": "^17.2.2",
+    "ethers": "^6.8.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.0",
+    "@types/node": "^20.8.0",
+    "jest": "^29.7.0",
+    "rimraf": "^5.0.0",
+    "ts-jest": "^29.1.0",
+    "tsx": "^4.0.0",
+    "typescript": "^5.2.0"
+  },
+  "files": [
+    "dist/**/*",
+    "src/**/*",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
