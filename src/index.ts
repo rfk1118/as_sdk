@@ -15,6 +15,28 @@ export { HttpClient } from "./utils/http";
 
 import { AsterSDK, OrderStatus } from "./aster-sdk";
 
+// 交易配置参数
+const TRADING_CONFIG = {
+  // 交易对符号
+  SYMBOL: "4USDT",
+  BINANCE_FUTURE_SYMBOL: "4/USDT:USDT",
+
+  // 订单簿深度
+  LIMIT: 10,
+
+  // 单次交易金额
+  ONCE_AMOUNT: 1000,
+
+  // 买入套利阈值 (Aster买入 -> Binance卖出)
+  BUY_PROFIT_THRESHOLD: 1.01,
+
+  // 卖出套利阈值 (Aster卖出 -> Binance买入)
+  SELL_PROFIT_THRESHOLD: 0.996,
+
+  // 循环延迟 (ms)
+  LOOP_DELAY: 200,
+};
+
 // 测试主函数
 async function main() {
   console.log("开始测试订单薄获取功能...\n");
@@ -34,12 +56,7 @@ async function main() {
     },
   });
 
-  const SYMBOL = "ASTERUSDT";
-  const LIMIT = 10;
-  const ONCE_AMOUNT = 50;
-  const BUY_PROFIT_THRESHOLD = 1.01;
-  const SELL_PROFIT_THRESHOLD = 0.999;
-  const LOOP_DELAY = 200;
+  const { SYMBOL, LIMIT, ONCE_AMOUNT, BUY_PROFIT_THRESHOLD, SELL_PROFIT_THRESHOLD, LOOP_DELAY } = TRADING_CONFIG;
 
   while (true) {
     try {
@@ -101,9 +118,8 @@ async function executeBinanceOrder(
   amount: number,
   strategyPrefix: string
 ): Promise<void> {
-  const futureSymbol = "ASTER/USDT:USDT";
   await binance.createOrder(
-    futureSymbol,
+    TRADING_CONFIG.BINANCE_FUTURE_SYMBOL,
     "market",
     side,
     amount,
@@ -190,7 +206,7 @@ async function handleSellArbitrage(
       if (filledOrder?.status === OrderStatus.FILLED) {
         await executeBinanceOrder(binance, "Buy", amount, "AS_SELL");
         console.log("✅ 卖出套利完成");
-        await logAccountStatus(sdk, binance);
+        // await logAccountStatus(sdk, binance);
       }
     }
   } catch (error) {
@@ -210,10 +226,11 @@ function logError(error: unknown): void {
 }
 
 async function logAccountStatus(sdk: AsterSDK, binance: any): Promise<void> {
-  const accountInfo = await sdk.spot?.getBalance("ASTER");
+  const tokenSymbol = TRADING_CONFIG.SYMBOL.replace("USDT", "");
+  const accountInfo = await sdk.spot?.getBalance(tokenSymbol);
   console.log("Aster账户信息:", accountInfo);
 
-  const positions = await binance.fetchPositions(["ASTER/USDT:USDT"]);
+  const positions = await binance.fetchPositions([TRADING_CONFIG.BINANCE_FUTURE_SYMBOL]);
   console.log("Binance持仓信息:", positions[0].info);
 }
 
